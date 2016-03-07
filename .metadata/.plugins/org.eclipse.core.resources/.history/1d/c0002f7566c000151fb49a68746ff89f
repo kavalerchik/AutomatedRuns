@@ -1,0 +1,86 @@
+package automationFramework;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+public class main {
+
+	// MAIN 
+		public static void main(String[] args) throws InterruptedException, IOException {
+
+			RunTestForAllBrowsers(1);
+		}
+		
+		public static long pagesLoadTime = 0;
+		
+		/**
+		 * @param testId
+		 * @throws InterruptedException
+		 * @throws IOException
+		 */
+		private static void RunTestForAllBrowsers(int testId) throws InterruptedException, IOException {
+			
+			long timeGlobalStart = System.currentTimeMillis();
+			
+			
+			// setting Internet Explorer driver
+//			String exeServiceIEdriver = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\IEdriver2_48\\IEDriverServer.exe";
+//			System.setProperty("webdriver.ie.driver", exeServiceIEdriver);
+//			InternetExplorerDriver driverIE = new InternetExplorerDriver();
+//			HashMap<String, List<String>> resIE = RunTest(testId, driverIE, "IE"); 
+			
+			// Setting FireFox driver
+			WebDriver driverFF = new FirefoxDriver();
+			HashMap<String, List<String>> resFF = RunTest(testId, driverFF, "Firefox"); 
+							
+			// setting Chrome Driver (the driver opens a Server application)
+			String exePathChromeDriver = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\chrome_driver2_0\\chromedriver.exe";
+			System.setProperty("webdriver.chrome.driver", exePathChromeDriver);
+			WebDriver driverChrome = new ChromeDriver();			
+			HashMap<String, List<String>> resChrome =RunTest(testId, driverChrome, "Chrome"); 
+			
+			// new ctest line
+			
+			Date date = new Date();
+			SimpleDateFormat df = new SimpleDateFormat("dd-MM-YYYY_HH-mm");
+			PrintStream out = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_"+df.format(date)+".txt"));
+			if(out != null){
+				System.out.println("\ntxt file was created succesfully");
+			}
+			//out.println(resIE);
+			out.println(resFF);
+			out.println(resChrome);
+			
+			long timeGlobalFinish = System.currentTimeMillis();
+			long timeGlobalTotal = timeGlobalFinish - timeGlobalStart;
+			System.out.println("## Test case Finish ## \nTotal time was:"+timeGlobalTotal / 1000.f / 60 +" minutes ##");
+			System.out.println("Total pages load times were: "+pagesLoadTime/1000.0+" seconds");
+	
+		}
+		
+		// choose the test case according to the number given in MAIN
+		private static HashMap<String, List<String>> RunTest(int testId, WebDriver driver, String browserName) throws InterruptedException, IOException {
+			HashMap<String, List<String>> res = new HashMap<String, List<String>>();
+			switch (testId) {
+			case 1:
+				res = TC1_BasicFullLoad.RunTestCase1(driver, browserName);
+				break;
+			case 2:
+				//res = TC1_BasicFullLoad.RunTestCase2(driver, browserName);
+				break;
+			default: 
+				break;
+			}
+			return res;
+		}
+}

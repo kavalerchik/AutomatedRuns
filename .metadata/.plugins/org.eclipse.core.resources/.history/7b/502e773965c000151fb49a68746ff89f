@@ -1,0 +1,48 @@
+package automationFramework;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+public class BasicAdTests {
+	
+	public static void CheckAdAppearance(Integer appearance, WebDriver driver, List<String> errors, String browserName, Integer i){
+		switch(appearance){
+		case 1: CheckAdAppearance1(driver, errors, browserName, i);
+				break;
+		case 2:
+			
+			break;
+		case 3:
+			
+			break;
+		case 4: CheckAdAppearance4(driver, errors, browserName, i);
+			break;
+		
+		}
+	}
+	
+	public static void CheckAdAppearance1(WebDriver driver, List<String>errors ,String browserName, Integer i){ 
+		WebElement element = BasicTests.GetElement(driver, "cbolaBanner0_1");
+		if (element != null && element.isDisplayed()) {
+			System.out.println("YEAH! -AD App1 was loaded succefuly and displayed on screen");
+		} else {
+			errors.add("Browser: "+browserName+"\n URL: "+(i+1)+"\n SHAYSE- AD App1 WASNT Displayed, but its in the page");
+			System.out.println("Browser: "+browserName+" URL: "+(i+1)+" SHAYSE- AD App1 WASNT displayed, but its in the page");
+		}
+		
+		}
+	
+	public static void CheckAdAppearance4(WebDriver driver, List<String> errors, String browserName, Integer i){
+		boolean AdApp4Status = driver.findElement(By.className("cbolaBanner0_4")).isDisplayed();
+		if (AdApp4Status) {
+			System.out.println("YEAH! -lower AD was loaded succefuly and displayed on screen");
+		} else {
+			errors.add("Browser: "+browserName+"\n URL: "+(i+1)+"\n SHAYSE- lower AD WASNT LOADED");
+			System.out.println("SHAYSE- lower AD WASNT LOADED");
+		}
+	}
+}
+

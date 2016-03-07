@@ -1,0 +1,81 @@
+package automationFramework;
+
+import java.util.List;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+
+public class BasicTests extends TC1_BasicFullLoad {
+
+	public static boolean IsScriptValid(WebDriver driver, List<String> errors, String browserName, Integer i) {
+		
+		boolean isScriptValid = true;
+		try {
+			boolean LayerStatus = driver.findElement(By.id("InContentScript0")).isEnabled();
+			if (LayerStatus) {
+				System.out.println("YEAH!- cbola SCRIPT was loaded succefuly inside the HTML");
+			} else {
+				errors.add("Browser: " + browserName + " URL: " + (i + 1) + " SHAYSE- cbola SCRIPT WASNT LOADED...");
+				System.out.println("SHAYSE- cbola SCRIPT WASNT LOADED...");
+				isScriptValid = false;
+			}
+		} catch (Exception e) {
+			System.out.println("SHAYSE- unexpected error: " + e.getMessage());
+			isScriptValid = false;
+		}
+		return isScriptValid;
+
+	}
+	
+	public static boolean CheckCenterWrapper(Integer layoutNumber, WebDriver driver, List<String>errors, String browserName, Integer i){
+		
+		boolean result = false;
+		
+		switch(layoutNumber){
+		case 100:
+			break;
+		case 110:
+			break;
+		case 120:
+			WebElement cbolaCenterWrapper = driver.findElement(By.id(Consts.centerWrapperId + 0));
+			if (cbolaCenterWrapper != null && cbolaCenterWrapper.isDisplayed()) {
+				System.out.println("YEAH!- cbola centerWrapper was loaded succefuly inside the HTML");
+				result = true;
+				
+			} else {
+				errors.add("Browser: "+browserName+" URL: "+(i+1)+" SHAYSE- cbola centerWrapper WASNT DISPLAYED");
+				System.out.println("SHAYSE- cbola centerWrapper WASNT DISPLAYED");
+				if(cbolaCenterWrapper == null){
+					System.out.println("SHAYSE- cbola centerWrapper WASNT LOADED");				
+				}
+				result = false;
+				
+			}
+			break;
+		case 130:
+			break;
+		case 140:
+			break;
+		}
+		return result;
+		
+		
+	}
+
+	// GetElement- check that element exists and then brings it.  ** we use it to catch Exception when the html class DOESNT Exists **
+	public static WebElement GetElement(WebDriver driver, String path) {
+		WebElement element;
+		try {
+
+			element = driver.findElement(By.className(path));
+			//System.out.println("YEAH! - " + path + " found!"); // no need for log. there is a log for success in the main
+		} catch (Exception e) {
+			element = null;
+			System.out.println("SHAYSE - " + path + " not found! either: \n(1) the page loads slowly \n(2) the ad was shown and deleted \n(3) no such appearance in GetAds. \n Error: " + e.getMessage());
+		}
+		return element;
+	}	
+}
+
+

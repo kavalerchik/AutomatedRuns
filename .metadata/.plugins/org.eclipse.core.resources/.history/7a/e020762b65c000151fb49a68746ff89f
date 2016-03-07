@@ -1,0 +1,221 @@
+package automationFramework;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List; // import file (urls4tests)
+import java.util.Scanner; // import file (urls4tests)
+
+import java.io.File; // import file (urls4tests)
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+// method - catch exceptions
+public class TC1_BasicFullLoad {
+	
+	/**
+	 * @param args
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+
+// Method "Run test case 1"
+	public static HashMap<String, List<String>> RunTestCase1(WebDriver driver, String browserName) throws InterruptedException, IOException  {
+
+		Integer layoutNumber = 120;
+		// import text file for Test URLS
+		Scanner sc = new Scanner(new File(
+				"C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\git\\testing_120\\src\\automationFramework\\URLs4test_layout120.txt"));
+		List<String> lines = new ArrayList<String>();
+								
+		while (sc.hasNextLine()) {
+			lines.add(sc.nextLine());
+		}
+		String[] URLlist = lines.toArray(new String[0]);
+		
+		// declare HashMap for collecting the errors in  each step
+		HashMap<String, List<String>> pageErrors = new HashMap<String, List<String>>();
+		
+		// loop to run on each URL 
+		
+		for (Integer i = 0; i < URLlist.length; i++) {
+			// check loading time until test script starts
+			long secBeforeLoadingURL = System.currentTimeMillis();
+			
+			// Step 1 - open target url
+			driver.get(URLlist[i]);
+			driver.manage().window().maximize();
+			
+			System.out.println("-----------------------------------------------------------");
+			
+			// measure time
+			long timeS = System.currentTimeMillis();
+			
+			//print page load duration
+			long timePageLoad = timeS - secBeforeLoadingURL;
+			System.out.println("URL no."+i+" loading duration was: "+timePageLoad/1000.0);
+			main.pagesLoadTime += timePageLoad; 
+			
+			List<String> errors = new ArrayList<String>();
+			
+			System.out.println("** Starting to test URL no." + (i+1) + " on "+browserName+" broswer **");
+			Integer PageSource = driver.getPageSource().length();
+			
+			// Step 2 - check if Carambola SCRIPT was in the HTML. if YES-continue steps if NO-skip steps
+			boolean isScript = BasicTests.IsScriptValid(driver, errors, browserName, i);
+			if(isScript){
+															
+				// Step 3 Verify Ad appearance 1
+				BasicAdTests.CheckAdAppearance(1, driver, errors, browserName, i);
+	
+				System.out.println("Page source length: " + PageSource);
+				// Step 3.1 wait 5 sec
+				Thread.sleep(5000);
+				
+				// Step 3.2 Verify Ad appearance 1 after 5 sec. (making sure the ad is closed, but still alive)
+				BasicAdTests.CheckAdAppearance(1, driver, errors, browserName, i);
+							
+				// Step 4 - check if carambola centerWrapper got opened
+				BasicTests.CheckCenterWrapper(layoutNumber, driver, errors, browserName, i);
+	
+				// Step 4.1 - check if cbola board was displayed (the actual game)
+				String CbolaBoard = "cbola_board";
+				boolean CbolaBoardStatus = driver.findElement(By.className(CbolaBoard)).isDisplayed();
+				if (CbolaBoardStatus) {
+					System.out.println("YEAH!- cbola board was displayed");
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+" SHAYSE- cbola borad is NOT displayed");
+					System.out.println("SHAYSE- cbola borad is NOT displayed"); // need to check on a case where half the board is displayed. do we catch it??
+				}
+				// Step 4.2 - Verify 1st Image -cbolaContent-imageLoader
+				String FirstImg = "cbolaContent-itemPicture0";
+				boolean CbolaFirstImg = driver.findElement(By.className(FirstImg)).isDisplayed();
+				if (CbolaFirstImg) {
+					System.out.println("YEAH!- we can see 1st image element:");
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+" SHAYSE- 1st img element WASNT displayed");
+					System.out.println("SHAYSE- 1st img element WASNT displayed");
+				}
+				WebElement ImageFile = driver.findElement(By.className(FirstImg));
+	
+				// get the src of the img
+				String Img0Class = "cbolaContent-itemPicture0";
+				WebElement img0 = driver.findElement(By.className(Img0Class));
+				String src0 = img0.getAttribute("src");
+				System.out.println(src0);
+	
+				// Step 4.3 - verify 1st item's text
+				String Text0class = " cbolaContent-itemDescription0";
+				boolean Text0b = driver.findElement(By.className(Text0class)).isDisplayed();
+				if (Text0b) {
+					System.out.println("YEAH!- 1st text is diplayed, and it says: ");
+					// WebElement Text0e =
+					// driver.findElement(By.className(Text0class));
+					// String Text0s = Text0e.getAttribute("td");
+					String Text0s = driver.findElement(By.className(Text0class)).getText();
+					System.out.println(Text0s);
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+" SHAYSE- 1st text WASNT displayed");
+					System.out.println("SHAYSE- 1st text WASNT displayed");
+				}
+				// Step 4.4- verify SHARE btn FB
+				String ShareFBclass = "cbola-fa-facebook";
+				boolean ShareFBb = driver.findElement(By.className(ShareFBclass)).isDisplayed();
+				if (ShareFBb) {
+					System.out.println("YEAH!- FB btn was displayed");
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+"SHAYSE- FB btn not displayed");
+					System.out.println("SHAYSE- FB btn not displayed");
+				}
+	
+				// Step 4.5- verify SHARE btn Twitter
+				String ShareTwitterclass = "cbola-fa-twitter";
+				boolean ShareTwitterb = driver.findElement(By.className(ShareTwitterclass)).isDisplayed();
+				if (ShareTwitterb) {
+					System.out.println("YEAH!- Twitter btn was displayed");
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+"SHAYSE- Twitter btn not displayed");
+					System.out.println("SHAYSE- Twitter btn NOT displayed");
+				}
+	
+				// Step 5- check TEXTs
+				// score title
+	
+				String text_Question = "Question";
+				String ScoreTitle = driver.findElement(By.className("cbolaContent-scoreTitle")).getText();
+				System.out.println("ref text is: " + text_Question);
+				System.out.println("text on screen is: " + ScoreTitle);
+				if (new String(text_Question).equals(ScoreTitle)) { // ScoreTitle == text_Question . why doesn't it works?...
+					System.out.println("the score_title matches the ref text");
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+"SHAYSER-there is NO match between the score title texts");
+					System.out.println("SHAYSER-there is NO match between the score title texts");
+				}
+	
+				// Step 5.2 - score unit
+				String text_yourScore = "Your score";
+				WebElement ScoreUnitElement = driver.findElement(By.className("cbolaContent-scoreUnit"));
+				String ScoreUnit = ScoreUnitElement.findElement(By.tagName("span")).getText();
+				System.out.println("ref text is: " + text_yourScore);
+				System.out.println("text on screen is: " + ScoreUnit);
+	
+				// score unit
+				if (new String(text_yourScore).equals(ScoreUnit)) {
+					System.out.println("the score_units matches the ref text");
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+"SHAYSE-there is NO match between the unit_score texts");
+					System.out.println("SHAYSER-there is NO match between the unit_score texts");
+				}
+				
+				// Step 5.4- verify items Title
+				String Titleclass = "cbolaContent-itemsTitle0";
+				boolean Titleb = driver.findElement(By.className(Titleclass)).isDisplayed();
+				if (Titleb) {
+					System.out.println("YEAH!- Title was displayed: ");
+					String Titles = driver.findElement(By.className(Titleclass)).getText();
+					System.out.println(Titles);
+				} else {
+					errors.add("Browser: "+browserName+" URL: "+(i+1)+"SHAYSER-there is NO match between the unit_score texts");
+					System.out.println("SHAYSE- Title NOT displayed");
+				}
+	
+				// Step 6 - wait 5 sec
+				Thread.sleep(5000);
+	
+				// Step 7 - check if AD was loaded in Appearance 1
+				BasicAdTests.CheckAdAppearance(1, driver, errors, browserName, i);
+	
+				// Step 8 - check if Lower AD was loaded in Appearance 4
+				BasicAdTests.CheckAdAppearance(4, driver, errors, browserName, i);
+			}else{
+				System.out.println("SHAYSE --- no script in page");
+				errors.add("Browser: "+browserName+" URL: "+(i+1)+"---SHAYSE--- no script in page. please delete URL from URL source");
+			}
+			
+			// Test run time
+			long timeF = System.currentTimeMillis();
+			long timeTotal = timeF - timeS;
+			//System.out.println(timeS);
+			//System.out.println(timeF);
+			System.out.println("Test "+(i+1)+" run time: " + timeTotal / 1000.0 + " Sec");
+			//System.out.println(DurationFormatUtils.formatDuration(timeTotal, "HH:mm:ss:SS")); // also works
+			
+			if (!errors.isEmpty()) 
+			{
+				pageErrors.put(URLlist[i], errors);
+			}
+		}
+
+		// Step 9- SUMMARY & close page
+		System.out.println("SUMMARY - test case 1 on "+browserName+" browser:");
+		System.out.println(pageErrors.keySet());
+				
+		driver.close();
+				
+		//PrintStream out = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_"+System.currentTimeMillis()+"txt"));
+		//out.println(pageErrors);
+		return pageErrors;
+	}
+
+}

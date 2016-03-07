@@ -1,0 +1,106 @@
+package automationFramework;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.james.mime4j.field.datetime.DateTime;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+public class main {
+
+	public static long totalGeneralTime = 0;	
+	public static long totalPagesLoadTime = 0;
+			    		
+	// MAIN 
+		public static void main(String[] args) throws InterruptedException, IOException {
+			
+			RunTestForAllBrowsers(1);
+			RunTestForAllBrowsers(2);
+			RunTestForAllBrowsers(3);
+			
+		}
+					
+		/**
+		 * @param testId
+		 * @throws InterruptedException
+		 * @throws IOException
+		 */
+		private static void RunTestForAllBrowsers(int testId) throws InterruptedException, IOException {
+			
+			long timeGlobalStart = System.currentTimeMillis();
+			
+			
+		/*	// setting Internet Explorer driver
+			String exeServiceIEdriver = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\IEdriver2_48\\IEDriverServer.exe";
+			System.setProperty("webdriver.ie.driver", exeServiceIEdriver);
+			InternetExplorerDriver driverIE = new InternetExplorerDriver();
+			HashMap<String, List<String>> resIE = RunTest(testId, driverIE, "IE"); 
+			*/
+			// Setting FireFox driver
+			WebDriver driverFF = new FirefoxDriver();
+			HashMap<String, List<String>> resFF = RunTest(testId, driverFF, "Firefox"); 
+							
+			// setting Chrome Driver (the driver opens a Server application)
+			String exePathChromeDriver = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\chrome_driver2_0\\chromedriver.exe";
+			System.setProperty("webdriver.chrome.driver", exePathChromeDriver);
+			WebDriver driverChrome = new ChromeDriver();			
+			HashMap<String, List<String>> resChrome =RunTest(testId, driverChrome, "Chrome"); 
+			
+			// export TXT file for Errors		
+			PrintStream outErrs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Errors_TC_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+			
+			// export TXT file for Logs ==> located in each TC		
+			//PrintStream outLogs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Logs_TC_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+			
+			//outErrs.println(resIE);
+			outErrs.println("\n** FireFox results **\n");
+		//	outErrs.println(resFF);
+			outErrs.println("\n** Chrome results **\n");
+			outErrs.println(resChrome);
+
+			
+			long timeGlobalFinish = System.currentTimeMillis();
+			long timeGlobalTotal = timeGlobalFinish - timeGlobalStart;
+			System.out.println("\n## Test case "+ testId +" Finished ## \n"
+					+ LocalDateTime.now() + "\n\n" 
+					+ "Total time was:"+timeGlobalTotal / 1000.d / 60 +" minutes ##");
+			//java.util.Date dateEndTest = new java.util.Date();
+			//System.out.println(dateEndTest);
+						
+			if(outErrs != null){
+				System.out.println("\ntxt file was created succesfully");
+			}
+			System.out.println("Total pages load times were: "+TotalPagesLoadTime/1000.0/60+" minutes");
+			System.out.println("Net testing time: " + (timeGlobalTotal - TotalPagesLoadTime)/1000.0/60 +" minutes");
+	
+		}
+		
+		// choose the test case according to the number given in MAIN
+		private static HashMap<String, List<String>> RunTest(int testId, WebDriver driver, String browserName) throws InterruptedException, IOException {
+			HashMap<String, List<String>> res = new HashMap<String, List<String>>();
+			switch (testId) {
+			case 1:
+				res = TC1_BasicFullLoad.RunTestCase1(driver, browserName, testId);
+				break;
+			case 2:
+				res = TC2_HalfGame.RunTestCase2(driver, browserName, testId);
+				break;
+			case 3:
+				res = TC3_EndingScreen_load.RunTestCase3(driver, browserName, testId);
+				break;
+			default: 
+				break;
+			}
+			return res;
+		}
+}

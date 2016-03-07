@@ -1,0 +1,83 @@
+package sandbox;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.apache.commons.lang3.text.StrBuilder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import automationFramework.Consts;
+import automationFramework.GeneralUtils;
+
+public class SimilarWebExtractor {
+
+	public static long totalTestingTime = 0;	
+	public static long totalPagesLoadTime = 0;
+	
+	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+						
+				long timeTCStart = System.currentTimeMillis();
+									
+				// setting Chrome Driver (the driver opens a Server application)
+				String exePathChromeDriver = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\chrome_driver2_0\\chromedriver.exe";
+				System.setProperty("webdriver.chrome.driver", exePathChromeDriver);
+				WebDriver driverChrome = new ChromeDriver();
+								
+						
+				// create log file object  		
+				PrintStream outLogs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\similarWebExtractor\\output_similarWeb_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+				
+				StrBuilder log = new StrBuilder();
+								
+				// import text file for Test URLS
+				Scanner sc = new Scanner(new File("C:\\Users\\Yair\\Documents\\yair\\QA\\similarWebExtractor\\input_domains.txt"));
+				List<String> lines = new ArrayList<String>();
+									
+				while (sc.hasNextLine()) {
+					lines.add(sc.nextLine());
+				}
+				
+				String[] URLlist = lines.toArray(new String[0]);
+				for (Integer i = 0; i < URLlist.length; i++) {
+					System.out.println("-----  URL " + (i+1) + " --------- "+ URLlist[i]+" --------------------");
+					
+					driverChrome.get("https://www.similarweb.com/website/www."+URLlist[i]);
+					long randomNumber = 5 + (int)(Math.random() * ((10 - 5) + 1));
+					Thread.sleep((long) randomNumber);
+					
+					WebElement totalVisits = driverChrome.findElement(By.xpath("/html/body/div[3]/div/div/div[4]/div[2]/div[2]/div/div[2]/div/span[2]"));
+					String stringTotalVisits = totalVisits.getText();
+					stringTotalVisits = stringTotalVisits.substring(0, stringTotalVisits.length()-1);
+					double doubleTotalVisits = Double.parseDouble(stringTotalVisits);
+					System.out.println(doubleTotalVisits);
+					
+					WebElement pageViews = driverChrome.findElement(By.xpath("/html/body/div[3]/div/div/div[4]/div[2]/div[2]/div/div[4]/div/span[2]"));
+					String stringPageViews = pageViews.getText();
+					double doublePageViews = Double.parseDouble(stringPageViews);
+					System.out.println(doublePageViews);
+					
+					int result = (int)(doubleTotalVisits * doublePageViews * 1000);
+					log.append(URLlist[i] + "\t" + result + "\n");
+					outLogs.println(log);
+
+				}
+				
+						
+			
+		
+		
+	}
+
+}

@@ -1,0 +1,276 @@
+package automationFramework;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
+
+import org.apache.commons.lang3.text.StrBuilder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.JavascriptExecutor;
+
+public class TC2_HalfGame {
+
+	public static HashMap<String, List<String>> RunTestCase2(WebDriver driver, String browserName, Integer testId) throws InterruptedException, IOException  {
+		// prepare empty log file
+		PrintStream outLogs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Logs_TC_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+		
+		StrBuilder log = new StrBuilder();
+		log.appendln("-------------- TC "+ testId +" "+  driver + " Log output ----------------");
+		Integer layoutNumber = 120;
+		// import text file for Test URLS
+		Scanner sc = new Scanner(new File(Consts.inputUrlsTxtFile));
+		List<String> lines = new ArrayList<String>();
+		while (sc.hasNextLine()) {
+			lines.add(sc.nextLine());
+		}
+		String[] URLlist = lines.toArray(new String[0]);
+		
+		// declare HashMap for collecting the errors in  each step
+		HashMap<String, List<String>> pageErrors = new HashMap<String, List<String>>();
+		
+		System.out.println("===========  URL loop  ===========  " + browserName + "  ===========  TC " + testId + "  ============================");
+		// loop to run on each URL 
+		
+		for (Integer i = 0; i < URLlist.length; i++) {
+			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "\n*******  " + URLlist[i]);
+			boolean testRunSuccessfull = true;
+			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "Test run:: XXX_CHANGE_ME_XXX");
+			
+			// check loading time until test script starts
+			long secBeforeLoadingURL = System.currentTimeMillis();
+			
+			// Step 1 - open target url
+			WebDriverWait wait = new WebDriverWait(driver, 20);
+			driver.get(URLlist[i]);
+			
+			
+			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + i + " -----------------------------");
+			
+			// measure time
+			long timeS = System.currentTimeMillis();
+			
+			//print page load duration
+			long timePageLoad = timeS - secBeforeLoadingURL;
+			log.append("URL no."+(i+1)+" loading duration was: "+timePageLoad/1000.0);
+			System.out.println("URL no."+(i+1)+" loading duration was: "+timePageLoad/1000.0);
+			main.pagesLoadTime += timePageLoad; 
+			
+			List<String> errors = new ArrayList<String>();
+			
+			System.out.println("** Starting to test URL no." + (i+1) + " on "+browserName+" broswer **");
+			Integer PageSource = driver.getPageSource().length();
+			
+			// Step 2 - check if Carambola SCRIPT was in the HTML. if YES-continue steps if NO-skip all and End
+			boolean isScript = BasicTests.IsScriptValid(driver, errors, browserName, i);
+			if(isScript){
+				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Script Found");
+				//scroll down to layer
+					//JAVA Style	
+			 /*	WebElement layer = driver.findElement(By.id(Consts.centerWrapperId + 0));
+				Actions actions = new Actions(driver);
+				actions.moveToElement(layer);
+				*/
+				// javaScript Style
+				
+				// check if the layout is 120. if not - end
+				String layerType = driver.findElement(By.className(Consts.centerWrapperId)).getAttribute("layertype");
+				Integer layerNumber = Integer.parseInt(layerType);
+				if(layerNumber == layoutNumber){
+				
+					boolean wrapper = driver.findElements(By.id(Consts.centerWrapperId + 0)).size() != 0;
+					if(wrapper){  // eliminate bug when wrapper didnt load
+						log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Wrapper exists");
+						JavascriptExecutor jse = (JavascriptExecutor) driver;
+						jse.executeScript("document.getElementById('InContent-container-centerWrapper0').scrollIntoView(true);");
+						//Thread.sleep(2000);
+						//jse.executeScript("window.scrollBy(0,-100)"); // (-X) will scroll up
+					}
+					
+					// Step 3 Hover "True" btn
+					
+					// Step 4,5,6,7,8,9- 1st click "true" btn and the wait 3 seconds for item to load
+					List<String> items = new ArrayList<String>();
+									
+					Integer clicksTrue = 0;
+					while(clicksTrue < 3){
+						// save and show data before click:
+							
+							//check if img is displayed and save error if not
+						String ImgClass = Consts.firstImgClass + clicksTrue;
+							// check if img class exists 
+						boolean isImgExists = driver.findElements(By.className(ImgClass)).size() != 0;
+						if(isImgExists = true){
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image " + clicksTrue + " exists");
+							WebElement imgElement = driver.findElement(By.className(ImgClass));	
+							String imgSrc = imgElement.getAttribute("src");
+							boolean IsFirstImg = driver.findElement(By.className(ImgClass)).isDisplayed();
+							if (IsFirstImg) {
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image " + clicksTrue + "  displayed");
+								System.out.println("YEAH!- we can see image no."+clicksTrue+":\n  "+imgSrc);
+							} else {
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Image " + clicksTrue + " WASNT  displayed");
+								errors.add("\nBrowser: "+browserName+" URL: "+(i+1)+" SHAYSE- img no."+clicksTrue+" WASNT displayed");
+								System.out.println("SHAYSE- img no."+clicksTrue+" WASNT displayed");
+								testRunSuccessfull = false;
+							}
+						
+							// check if item's text is displayed
+							String textClass = Consts.firstItemClass + clicksTrue;
+							String textItem = driver.findElement(By.className(textClass)).getText();
+							boolean isText = driver.findElement(By.className(textClass)).isDisplayed();
+							if (isText) {
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Item " + clicksTrue + "  displayed");
+								System.out.println("YEAH!- text of item no." + clicksTrue + " is diplayed, and it says: \n  " + textItem);				
+							} else {
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Item " + clicksTrue + " WASNT displayed");
+								errors.add("\nBrowser: "+browserName+" URL: " + (i+1) + " SHAYSE- text of item no." + clicksTrue + " WASNT displayed");
+								System.out.println("SHAYSE- text of item no." + clicksTrue + " WASNT displayed");
+								testRunSuccessfull = false;
+							}
+						
+							items.add(clicksTrue, textItem.concat(", " + imgSrc));
+						}else{
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Image " + clicksTrue + " DOESNT exists");
+							errors.add("SHAYSE- cant find img class: "+ImgClass);
+							System.out.println("img DOESNT exists in page");
+							testRunSuccessfull = false;
+							}
+						
+						//click to next item
+						
+						driver.findElement(By.id(Consts.trueBtnId)).click();
+						log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - click no. " + (clicksTrue + 1) + " occurred");
+						Thread.sleep(3000);
+						clicksTrue++;
+										
+					}
+												
+					
+					// Step 10 hover on FALSE btn
+					
+					
+					// Step 11,12,13,14 - click "False" btn and wait 3 sec
+					Integer clicksFalse = 0;
+					while(clicksFalse < 3){
+						
+						// save and show data before click:
+							
+							//check if img is displayed, print,  and save error if not
+						String ImgClass = "cbolaContent-itemPicture"+(clicksFalse+clicksTrue);
+						WebElement imgElement = driver.findElement(By.className(ImgClass));
+						String imgSrc = imgElement.getAttribute("src");
+						
+						boolean IsFirstImg = driver.findElement(By.className(ImgClass)).isDisplayed();
+						if (IsFirstImg) {
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image no. " + (clicksFalse + clicksTrue) + " displayed");
+							System.out.println("YEAH!- we can see image no."+(clicksFalse+clicksTrue)+":\n  "+imgSrc);
+						} else {
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Image no. " + (clicksFalse + clicksTrue) + " WASNT displayed");
+							errors.add("\nBrowser: "+browserName+" URL: "+(i+1)+" SHAYSE- img no."+(clicksFalse+clicksTrue)+" WASNT displayed");
+							System.out.println("SHAYSE- img no."+(clicksFalse+clicksTrue)+" WASNT displayed");
+							testRunSuccessfull = false;
+						}
+							// check if item's text is displayed, print, save error if not
+						String textClass = "cbolaContent-itemDescription"+(clicksFalse+clicksTrue);
+						String textItem = driver.findElement(By.className(textClass)).getText();
+						
+						boolean isText = driver.findElement(By.className(textClass)).isDisplayed();
+						if (isText) {
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Item no. " + (clicksFalse + clicksTrue) + " displayed: " +textItem);
+							System.out.println("YEAH!- text of item no."+(clicksFalse+clicksTrue)+" is diplayed, and it says: \n  "+textItem);
+													
+						} else {
+							errors.add("\nBrowser: "+browserName+" URL: "+(i+1)+" SHAYSE- text of item no."+(clicksFalse+clicksTrue)+" WASNT displayed");
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Item no. " + (clicksFalse + clicksTrue) + " WASNT displayed");
+							System.out.println("SHAYSE- text of item no."+(clicksFalse+clicksTrue)+" WASNT displayed");
+							testRunSuccessfull = false;
+						}
+						
+						items.add((clicksFalse+clicksTrue), textItem.concat(", "+imgSrc));			
+						// click
+						try {
+							driver.findElement(By.id(Consts.falseBtnId)).click();
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - click no. " + (clicksFalse + clicksTrue + 1) + " occurred");
+							Thread.sleep(3000);
+							clicksFalse++;
+						} catch (Exception e) {
+							System.out.println("couldnt click FALSE btn");
+						}
+																	
+					}
+					
+					//print items List
+					System.out.println("\n  List of items:");
+					for(Integer j = 0; j < items.size(); j++ ){
+						System.out.println(items.get(j));								
+					}
+					// check that there aren't similar items
+					for(Integer j = 0; j < items.size(); j++){
+						for(Integer k = j+1; k < items.size(); k++){
+							if(items.get(i).equals(items.get(k)) && items.get(k) != null){
+								System.out.println("--SHAYSE-- item no."+j+" and item no."+k+" are similar");
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - item no."+j+" and item no."+k+" are similar");
+							}else{
+								System.out.println("--YEAHH-- item no."+j+" and item no."+k+" are NOT similar");
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - item no."+j+" and item no."+k+" are NOT similar");
+							}
+						}
+					}
+				}else {
+					System.out.println("SHAYSE-- the layout is NOT 120. the testCase DOESNT fit. moving to next url");
+					log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - the layout is NOT 120. the testCase DOESNT fit. moving to next url");
+				}
+				
+				
+				
+			}else{
+				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "** STOP ** Scrpit Not Found");
+				testRunSuccessfull=false;
+				System.out.println("SHAYSE --- no script in page");
+				errors.add("Browser: "+browserName+" URL: "+(i+1)+"---SHAYSE--- no script in page. please delete URL from URL source file");
+			}
+			// Test run time
+			long timeF = System.currentTimeMillis();
+			long timeTotal = timeF - timeS;
+			//System.out.println(timeS);
+			//System.out.println(timeF);
+			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "Test "+(i+1)+" FINISHED :) Run time: " + timeTotal / 1000.0 + " Sec");
+			System.out.println("Test "+(i+1)+" FINISHED :) Run time: " + timeTotal / 1000.0 + " Sec");
+			//System.out.println(DurationFormatUtils.formatDuration(timeTotal, "HH:mm:ss:SS")); // also works
+			
+			if (!errors.isEmpty()) 
+			{
+				pageErrors.put(URLlist[i], errors);
+			}
+		
+			if(testRunSuccessfull)
+				log.replaceAll("XXX_CHANGE_ME_XXX", "Successful");
+			else
+				log.replaceAll("XXX_CHANGE_ME_XXX", "FAILED");
+			// print Log txt
+			outLogs.print(log);
+		}
+
+		// Step 9- SUMMARY & close page
+		System.out.println("SUMMARY - test case 2 on "+browserName+" browser:");
+		System.out.println(pageErrors.keySet());
+				
+		driver.close();
+				
+		//PrintStream out = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_"+System.currentTimeMillis()+"txt"));
+		//out.println(pageErrors);
+		return pageErrors;
+	}
+
+
+	
+}

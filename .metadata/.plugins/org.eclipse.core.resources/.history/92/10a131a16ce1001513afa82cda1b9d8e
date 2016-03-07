@@ -1,0 +1,52 @@
+package automationFramework;
+
+public class Consts {
+
+	// General
+	public static String inputUrlsTxtFile = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\git\\testing_120\\src\\automationFramework\\URLs4test_layout120.txt";
+	public static String outputLogFile = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Logs_TC_";
+	public static String outputErrorsFile = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Errors_TC_";
+	
+	
+	
+	//120
+		//classes
+	public static String firstImgClass="cbolaContent-itemPicture"; // FIRST_IMAGE_CLASS
+	public static String firstItemClass="cbolaContent-itemDescription";
+	public static String boardClass="cbola_board";
+	public static String shareFBClass="cbola-fa-facebook";
+	public static String shareTwitterClass="cbola-fa-twitter";
+	public static String scoreTitleClass="cbolaContent-scoreTitle";
+	public static String scoreUnitClass="cbolaContent-scoreUnit";
+	public static String titleClass ="cbolaContent-itemsTitle0";
+	public static String endingScreensMsgTitleClass ="cbolaContent-finalGameMessageTitle";
+	public static String endingScreenMsgNameClass ="cbolaContent-finalGameMessageName";
+	public static String endingScreenMsgBtnClass ="cbolaContent-finalGameMessageButton";
+	public static String endingScreenScoreUnitClass ="cbolaContent-scoreUnitTitle";
+	public static String endingScreenScoreNumberClass ="cbolaContent-scoreNumber";
+	public static String endingScreenShareTitleClass = "cbolaContent-scoreUnitShareTitle";
+	public static String endingScreenShareTitle2Class = "cbolaContent-scoreUnitShareTitle2";
+	public static String endingScreenShareIconsClass = "cbolaContent-scoreUnitShareIcons";
+	
+	//IDs
+	public static String centerWrapperId="InContent-container-centerWrapper";
+	public static String trueBtnId ="cbolaContent-leftButton0";
+	public static String falseBtnId ="cbolaContent-rightButton0";
+	
+	
+		//texts
+	public static String textQuestion = "Question";
+	public static String textYourScore  = "Your score";
+	public static String score1_2 = "You Scored a Ridiculous";
+	public static String score3_4 = "You Scored a Lame";
+	public static String score5_6 = "You Scored a Fair";
+	public static String score7_8 = "You Scored a Mighty";
+	public static String score9 = "You Scored an Awesome";
+	public static String score10 = "you Scored a Perfect";
+	
+		
+	
+	
+	
+	
+}
