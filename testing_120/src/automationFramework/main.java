@@ -23,7 +23,7 @@ public class main {
 
 	public static long totalTestingTime = 0;	
 	public static long totalPagesLoadTime = 0;
-	// public static Integer totalURLs = null;  TO DO
+	// public static Integer totalURLs = null;  TO DO today
 			    		
 	// MAIN 
 		public static void main(String[] args) throws InterruptedException, IOException {
