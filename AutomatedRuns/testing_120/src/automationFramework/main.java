@@ -27,7 +27,7 @@ public class main {
 			    		
 	// MAIN 
 		public static void main(String[] args) throws InterruptedException, IOException {
-			
+			//delete me
 			RunTestForAllBrowsers(1);
 			RunTestForAllBrowsers(2);
 			RunTestForAllBrowsers(3);
