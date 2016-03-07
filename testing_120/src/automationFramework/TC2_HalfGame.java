@@ -11,24 +11,27 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 public class TC2_HalfGame {
 
 	public static TestResult RunTestCase2(WebDriver driver, String browserName, Integer testId) throws InterruptedException, IOException  {
 		// prepare empty log file
-		PrintStream outLogs = new PrintStream(new FileOutputStream(Consts.outputLogFile+"_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+		//PrintStream outLogs = new PrintStream(new FileOutputStream(Consts.outputLogFile+"_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
 		
 		// declare strBiulders for collecting the errors in  each step
 		StrBuilder pageErrors = new StrBuilder();
 		StrBuilder log = new StrBuilder();
-		
-		
+		StrBuilder summary = new StrBuilder(); // for the summary
+				
 		log.appendln("-------------- TC "+ testId +" "+  driver + " Log output ----------------");
 		Integer layoutNumber = 120;
 		// import text file for Test URLS
@@ -46,9 +49,13 @@ public class TC2_HalfGame {
 		// loop to run on each URL 
 		
 		for (Integer i = 0; i < URLlist.length; i++) {
-			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "\n*******  " + URLlist[i]);
+			main.urlRunId ++;
+			summary.append(main.urlRunId);
+			
+			log.appendln("\nURL run ID: " + main.urlRunId + "\nTest run:: XXX_CHANGE_ME_XXX");
+			log.appendln("*******  " + URLlist[i]);
 			boolean testRunSuccessfull = true;
-			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "Test run:: XXX_CHANGE_ME_XXX");
+			
 			
 			// check loading time until test script starts
 			long secBeforeLoadingURL = System.currentTimeMillis();
@@ -126,12 +133,14 @@ public class TC2_HalfGame {
 							String imgSrc = imgElement.getAttribute("src");
 							boolean IsFirstImg = driver.findElement(By.className(ImgClass)).isDisplayed();
 							if (IsFirstImg) {
-								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image " + clicksTrue + "  displayed");
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image " + clicksTrue + "  displayed: "+ imgSrc);
 								System.out.println("YEAH!- we can see image no."+clicksTrue+":\n  "+imgSrc);
 							} else {
 								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Image " + clicksTrue + " WASNT  displayed");
 								errors.add("\nBrowser: "+browserName+" URL: "+(i+1)+" SHAYSE- img no."+clicksTrue+" WASNT displayed");
 								System.out.println("SHAYSE- img no."+clicksTrue+" WASNT displayed");
+								File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+								FileUtils.copyFile(scrFile, new File(Consts.outputDirectory + "screenshot_"+ browserName +"_url_"+ i +"_img no."+clicksTrue+" WASNT displayed.png"));
 								testRunSuccessfull = false;
 							}
 						
@@ -140,12 +149,14 @@ public class TC2_HalfGame {
 							String textItem = driver.findElement(By.className(textClass)).getText();
 							boolean isText = driver.findElement(By.className(textClass)).isDisplayed();
 							if (isText) {
-								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Item " + clicksTrue + "  displayed");
+								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Item " + clicksTrue + "  displayed: " + textItem);
 								System.out.println("YEAH!- text of item no." + clicksTrue + " is diplayed, and it says: \n  " + textItem);				
 							} else {
 								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Item " + clicksTrue + " WASNT displayed");
 								errors.add("\nBrowser: "+browserName+" URL: " + (i+1) + " SHAYSE- text of item no." + clicksTrue + " WASNT displayed");
 								System.out.println("SHAYSE- text of item no." + clicksTrue + " WASNT displayed");
+								File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+								FileUtils.copyFile(scrFile, new File(Consts.outputDirectory + "screenshot_"+ browserName +"_url_"+ i +"_text of item no."+clicksTrue+" WASNT displayed.png"));
 								testRunSuccessfull = false;
 							}
 						
@@ -183,7 +194,7 @@ public class TC2_HalfGame {
 						
 						boolean IsFirstImg = driver.findElement(By.className(ImgClass)).isDisplayed();
 						if (IsFirstImg) {
-							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image no. " + (clicksFalse + clicksTrue) + " displayed");
+							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Image no. " + (clicksFalse + clicksTrue) + " displayed: " + imgSrc);
 							System.out.println("YEAH!- we can see image no."+(clicksFalse+clicksTrue)+":\n  "+imgSrc);
 						} else {
 							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Image no. " + (clicksFalse + clicksTrue) + " WASNT displayed");
@@ -231,9 +242,12 @@ public class TC2_HalfGame {
 							if(items.get(k) != null && items.get(i).equals(items.get(k)) ){
 								System.out.println("--SHAYSE-- item no."+j+" and item no."+k+" are similar");
 								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - item no."+j+" and item no."+k+" are similar");
+								File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+								FileUtils.copyFile(scrFile, new File(Consts.outputDirectory + "screenshot_"+ browserName +"_url_"+ i +"_item no."+j+" and item no."+k+" are similar.png"));
 							}else{
 								System.out.println("--YEAHH-- item no."+j+" and item no."+k+" are NOT similar");
 								log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - item no."+j+" and item no."+k+" are NOT similar");
+								
 							}
 						}
 					}
@@ -245,7 +259,7 @@ public class TC2_HalfGame {
 				
 				
 			}else{
-				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "** STOP ** Scrpit Not Found");
+				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "** STOP ** Script Not Found");
 				testRunSuccessfull=false;
 				System.out.println("SHAYSE --- no script in page");
 				errors.add("Browser: "+browserName+" URL: "+(i+1)+"---SHAYSE--- no script in page. please delete URL from URL source file");
@@ -264,10 +278,14 @@ public class TC2_HalfGame {
 				pageErrors.append(URLlist[i], errors);
 			}
 		
-			if(testRunSuccessfull)
+			if(testRunSuccessfull){
 				log.replaceAll("XXX_CHANGE_ME_XXX", "Successful");
-			else
+				summary.appendln("\tSuccessful");
+			}else{
 				log.replaceAll("XXX_CHANGE_ME_XXX", "FAILED");
+				summary.appendln("\tFAILED");
+			}
+				
 			
 		}
 
@@ -283,7 +301,7 @@ public class TC2_HalfGame {
 				
 		//PrintStream out = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_"+System.currentTimeMillis()+"txt"));
 		//out.println(pageErrors);
-		return new TestResult(log, pageErrors);
+		return new TestResult(log, pageErrors, summary);
 	}
 
 

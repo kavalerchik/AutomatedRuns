@@ -23,8 +23,9 @@ public class main {
 
 	public static long totalTestingTime = 0;	
 	public static long totalPagesLoadTime = 0;
-	// public static Integer totalURLs = null;  TO DO today
-			    		
+	// public static Integer totalURLs = null;  TO DO 
+	public static long urlRunId = 10000;
+	
 	// MAIN 
 		public static void main(String[] args) throws InterruptedException, IOException {
 			
@@ -76,7 +77,7 @@ public class main {
 			// export TXT file for Errors		
 			WriteToFile(testResults, "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_TC_"+testId+"_");
 			
-			PrintStream outErrs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Errors_TC_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+			//PrintStream outErrs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Errors_TC_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
 			
 			// export TXT file for Logs ==> located in each TC		
 			//PrintStream outLogs = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_Logs_TC_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
@@ -97,9 +98,9 @@ public class main {
 			//java.util.Date dateEndTest = new java.util.Date();
 			//System.out.println(dateEndTest);
 						
-			if(outErrs != null){
+		/*	if(outErrs != null){
 				System.out.println("\ntxt file was created succesfully");
-			}
+			}*/
 			
 			// not accurate
 			System.out.println("Total time for loading all pages in TC "+testId+" was: "+totalPagesLoadTime/1000.0/60+" minutes");
@@ -128,18 +129,29 @@ public class main {
 			return res;
 		}
 		
+		// writes 2 files AFTER EACH TC
 		private static void WriteToFile(Vector<TestResult> outputs, String prePath) throws FileNotFoundException{
 			
 			PrintStream myFile = new PrintStream(new FileOutputStream(prePath + "Log_" + GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));			
-						
+			
+			myFile.println("~~~~~~~~~~~~   Summary Result   ~~~~~~~~~~~~~~");
+			myFile.println("Run ID\tResult");
+			myFile.println("--------------");
 			for(TestResult result : outputs){
-				myFile.println("*****" + result.driver + "****");
+				//myFile.println("*****" + result.driver + "****");
+				myFile.println(result.runSummary);			
+				}
+			myFile.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+			
+			for(TestResult result : outputs){
+				//myFile.println("*****" + result.driver + "****");
 				myFile.println(result.runLog);
 			}
 			
 			myFile = new PrintStream(new FileOutputStream(prePath + "Error_" + GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));			
 			for(TestResult result : outputs){
-				myFile.println("*****" + result.driver + "****");
+				//myFile.println("*****" + result.driver + "****");
+				
 				myFile.println(result.runErrors);
 			}			
 			

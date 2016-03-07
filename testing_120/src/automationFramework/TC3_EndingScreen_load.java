@@ -28,11 +28,12 @@ public class TC3_EndingScreen_load {
 
 	public static TestResult RunTestCase3(WebDriver driver, String browserName, Integer testId) throws InterruptedException, IOException  {
 		// prepare empty log file
-		PrintStream outLogs = new PrintStream(new FileOutputStream(Consts.outputLogFile+"_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
+		//PrintStream outLogs = new PrintStream(new FileOutputStream(Consts.outputLogFile+"_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
 		
 		// collecting the errors in  each step
 		StrBuilder pageErrors = new StrBuilder();
 		StrBuilder log = new StrBuilder();
+		StrBuilder summary = new StrBuilder(); // for the summary
 		
 		log.appendln("-------------- TC "+ testId +" "+  driver + " Log output ----------------");
 				
@@ -51,9 +52,13 @@ public class TC3_EndingScreen_load {
 		// loop to run on each URL 
 		
 		for (Integer i = 0; i < URLlist.length; i++) {
-			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "\n*******  " + URLlist[i]);
+			main.urlRunId ++;
+			summary.append(main.urlRunId);
+			
+			log.appendln("\nURL run ID: " + main.urlRunId + "\nTest run:: XXX_CHANGE_ME_XXX");
+			log.appendln("*******  " + URLlist[i]);
 			boolean testRunSuccessfull = true;
-			log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "Test run:: XXX_CHANGE_ME_XXX");
+			
 			
 			// check loading time until test script starts
 			long secBeforeLoadingURL = System.currentTimeMillis();
@@ -78,6 +83,7 @@ public class TC3_EndingScreen_load {
 			
 			//print page load duration
 			long timePageLoad = timeS - secBeforeLoadingURL;
+			log.appendln("URL no."+(i+1)+" loading duration was: "+timePageLoad/1000.0);
 			System.out.println("URL no."+(i+1)+" loading duration was: "+timePageLoad/1000.0);
 			main.totalPagesLoadTime += timePageLoad; 
 			
@@ -388,10 +394,14 @@ public class TC3_EndingScreen_load {
 			{
 				pageErrors.append(URLlist[i], errors);
 			}
-			if(testRunSuccessfull)
+			if(testRunSuccessfull){
 				log.replaceAll("XXX_CHANGE_ME_XXX", "Successful");
-			else
+				summary.appendln("\tSuccessful");
+			}else{
 				log.replaceAll("XXX_CHANGE_ME_XXX", "FAILED");
+				summary.appendln("\tFAILED");
+			}
+				
 		
 		}
 
@@ -412,7 +422,7 @@ public class TC3_EndingScreen_load {
 				
 		//PrintStream out = new PrintStream(new FileOutputStream("C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_"+System.currentTimeMillis()+"txt"));
 		//out.println(pageErrors);
-		return new TestResult(log, pageErrors);
+		return new TestResult(log, pageErrors, summary);
 	}
 
 
