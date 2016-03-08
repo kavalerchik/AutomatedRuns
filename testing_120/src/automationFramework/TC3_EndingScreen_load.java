@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 import org.eclipse.jetty.servlets.ConcatServlet;
 import org.openqa.selenium.By;
@@ -23,6 +24,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import sandbox.AudioPlayerExample1;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 public class TC3_EndingScreen_load {
 
@@ -59,6 +62,7 @@ public class TC3_EndingScreen_load {
 			log.appendln("*******  " + URLlist[i]);
 			boolean testRunSuccessfull = true;
 			
+			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + (i+1) + " -----------------------------");
 			
 			// check loading time until test script starts
 			long secBeforeLoadingURL = System.currentTimeMillis();
@@ -71,12 +75,13 @@ public class TC3_EndingScreen_load {
 			try{
 				driver.get(URLlist[i]);	
 			}catch(Exception e){
-				System.out.println("page waited "+maxPageRunTime+" seconds. we cant wait so we continue to next url");
+				System.out.println("page waited "+maxPageRunTime+" seconds. SHOW MUST GO ON!. continue to next url");
+				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - loading time exceeded limit. SHOW MUST GO ON!");
+				log.replaceAll("XXX_CHANGE_ME_XXX", "FAILED");
+				summary.appendln("\tFAILED");
 				continue;				
 			}
-			
-			
-			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + (i+1) + " -----------------------------");
+								
 			
 			// measure time
 			long timeS = System.currentTimeMillis();
@@ -340,6 +345,8 @@ public class TC3_EndingScreen_load {
 							System.out.println("STRANGE....- text of item no.10 is diplayed, and it says: \n  "+textItem);
 							log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - Item no.10 displayed before user clicked start");
 							// errors.add("\nBrowser: "+browserName+" URL: "+(i+1)+" SHAYSE- text of item no.10 WASNT displayed");
+							File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+							FileUtils.copyFile(scrFile, new File(Consts.outputDirectory + "screenshot_"+ browserName +"_url_"+ i +"_Item no.10 displayed before user clicked start.png"));
 							testRunSuccessfull = false;
 						} else {
 							System.out.println("YEAH- text of item no.10 WASNT displayed...YET");

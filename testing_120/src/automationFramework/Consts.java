@@ -10,8 +10,8 @@ public class Consts {
 	
 	
 	//120
-		//classes
-	public static String FIRST_IMG_CLASS="cbolaContent-itemPicture"; // FIRST_IMAGE_CLASS
+		// HTML classes
+	public static String FIRST_IMG_CLASS="cbolaContent-itemPicture"; 
 	public static String FIRST_ITEM_CLASS="cbolaContent-itemDescription";
 	public static String BOARD_CLASS="cbola_board";
 	public static String SHARE_FB_CLASS="cbola-fa-facebook";
@@ -28,7 +28,7 @@ public class Consts {
 	public static String ENDING_SCREEN_SHARE_TITLE2_CLASS = "cbolaContent-scoreUnitShareTitle2";
 	public static String ENDING_SCREEN_SHARE_ICONS_CLASS = "cbolaContent-scoreUnitShareIcons";
 	
-	//IDs
+	// HTML IDs
 	public static String CENTER_WRAPPER_ID="InContent-container-centerWrapper";
 	public static String TRUE_BTN_ID ="cbolaContent-leftButton0";
 	public static String FALSE_BTN_ID ="cbolaContent-rightButton0";

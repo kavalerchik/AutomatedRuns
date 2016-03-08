@@ -72,6 +72,9 @@ public class TC1_BasicFullLoad {
 			// check loading time until test script starts			
 			long secBeforeLoadingURL = System.currentTimeMillis();
 			
+			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + (i+1) + " -----------------------------");
+			System.out.println(URLlist[i]);
+			
 			// Step 1 - open target url
 			
 				//implicit timeout for ALL elements
@@ -81,13 +84,13 @@ public class TC1_BasicFullLoad {
 				driver.get(URLlist[i]);	
 			}catch(Exception e){
 				System.out.println("page waited "+maxPageRunTime+" seconds. SHOW MUST GO ON! continuing to next url");
-				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - loading time excided limit. SHOW MUST GO ON!");
+				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - loading time exceeded limit. SHOW MUST GO ON!");
 				log.replaceAll("XXX_CHANGE_ME_XXX", "FAILED");
+				summary.appendln("\tFAILED");
 				continue;				
 			}
 									
-			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + (i+1) + " -----------------------------");
-			System.out.println(URLlist[i]);
+		
 			// measure time
 			long timeS = System.currentTimeMillis();
 			
@@ -107,6 +110,7 @@ public class TC1_BasicFullLoad {
 			if(isScript){
 				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "V - Script Found");
 				
+				Thread.sleep(1500);
 				// check if the layout is 120. if not - end
 				String layerTypeAttribute = driver.findElement(By.className(Consts.CENTER_WRAPPER_ID)).getAttribute("layertype");
 				Integer layerNumber = Integer.parseInt(layerTypeAttribute);

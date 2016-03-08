@@ -56,6 +56,7 @@ public class TC2_HalfGame {
 			log.appendln("*******  " + URLlist[i]);
 			boolean testRunSuccessfull = true;
 			
+			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + (i+1) + " -----------------------------");
 			
 			// check loading time until test script starts
 			long secBeforeLoadingURL = System.currentTimeMillis();
@@ -67,12 +68,13 @@ public class TC2_HalfGame {
 			try{
 				driver.get(URLlist[i]);	
 			}catch(Exception e){
-				System.out.println("page waited "+maxPageRunTime+" seconds. we cant wait so we continue to next url");
+				System.out.println("page waited "+maxPageRunTime+" seconds. SHOW MUST GO ON. continue to next url");
+				log.appendln(LocalDateTime.now().format(GeneralUtils.formatter) + "X - loading time exceeded limit. SHOW MUST GO ON!");
+				log.replaceAll("XXX_CHANGE_ME_XXX", "FAILED");
+				summary.appendln("\tFAILED");
 				continue;				
 			}
-			
-			
-			System.out.println("------------ " +browserName+ " ---------  TC " + testId + " --------  URL " + (i+1) + " -----------------------------");
+									
 			
 			// measure time
 			long timeS = System.currentTimeMillis();
