@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [mavenexample by packages]">
+  <test name="com.javacodekava.testng.maven(failed)">
+    <classes>
+      <class name="com.javacodekava.testng.maven.TC1_tstNg">
+        <methods>
+          <include name="testCase1Method"/>
+        </methods>
+      </class> <!-- com.javacodekava.testng.maven.TC1_tstNg -->
+    </classes>
+  </test> <!-- com.javacodekava.testng.maven(failed) -->
+</suite> <!-- Failed suite [mavenexample by packages] -->

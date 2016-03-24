@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]">
+  <parameter name="browser" value="firefox"/>
+  <test name="firefoxTest(failed)">
+    <parameter name="browser" value="firefox"/>
+    <classes>
+      <class name="com.javacodekava.testng.maven.TC1_tstNg">
+        <methods>
+          <include name="testCase1Method"/>
+          <include name="beforeTest"/>
+        </methods>
+      </class> <!-- com.javacodekava.testng.maven.TC1_tstNg -->
+    </classes>
+  </test> <!-- firefoxTest(failed) -->
+</suite> <!-- Failed suite [Suite] -->
