@@ -16,8 +16,11 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -31,31 +34,33 @@ import automationFramework.main;
 public class TC1_tstNg {
 
 	public WebDriver driver;
-
-@Parameters("browser")
+	
 @BeforeClass
+@Parameters("browser")
 	public void beforeTest(String browser){
-	if(browser.equalsIgnoreCase("firefox")){
-		WebDriver driver = new FirefoxDriver();
-	}else{
-		System.out.println("we got this browser: " + browser);
+		if(browser.equalsIgnoreCase("firefox")){
+			driver = new FirefoxDriver();
+		}else if (browser.equalsIgnoreCase("chrome")){
+			String exePathChromeDriver = "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\chrome_driver2_0\\chromedriver.exe";
+			System.setProperty("webdriver.chrome.driver", exePathChromeDriver);
+			driver = new ChromeDriver();		
+		}else{
+			System.out.println("didnt load a browser on Before Class");
+		}
 	}
-}
 
   @Test
-  public void testCase1Method() throws IOException, InterruptedException {
-	
-	  System.out.println("method start");  
-	  
+  @Parameters("browser")
+  public void testCase1Method(String browser) throws IOException, InterruptedException {
+		  
 	  // prepare empty log file (no need, there is one in the main)
 			//PrintStream outLogs = new PrintStream(new FileOutputStream(Consts.outputLogFile+"_"+testId+"_"+GeneralUtils.sdf.format(GeneralUtils.date)+".txt"));
 			Integer testId = 1;
-			String browserName = "";
+			String browserName = browser;
 			// declare String Builders 
 			StrBuilder pageErrors = new StrBuilder(); // for collecting the errors in  each step (was "Hash Map" before)
 			StrBuilder log = new StrBuilder(); // for full logs
 			StrBuilder summary = new StrBuilder(); // for the summary
-			
 			
 			log.appendln("-------------- TC "+ testId +" "+  browserName + " Log output ----------------");
 			
@@ -68,7 +73,12 @@ public class TC1_tstNg {
 				lines.add(sc.nextLine());
 			}
 			String[] URLlist = lines.toArray(new String[0]);
-			driver.manage().window().maximize();
+			try{
+				driver.manage().window().maximize();
+			}
+			catch(Exception e){
+				System.out.println(e.getMessage());
+			}
 				
 			System.out.println("===========  URL loop  ===========  " + browserName + "  ===========  TC " + testId + "  ============================\n\n");
 			// loop to run on each URL 

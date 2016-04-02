@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Suite">
+  
+  <!-- firefoxTest -->
   <test name="firefoxTest">
-    <parameter name="browser" value="firefox"></parameter>
+    <parameter name="browser" value="firefox"></parameter>   
     <classes>
       <class name="com.javacodekava.testng.maven.TC1_tstNg"></class>
-      <class name="com.javacodekava.testng.maven.TestNgMavenExampleTest.java"></class> 
     </classes>
-  </test> <!-- firefoxTest -->  
+  </test> 
   
-  
-     
+  <!-- ChromeTest -->
+  <test name="ChromeTest">
+    <parameter name="browser" value="chrome"></parameter>
+    
+    <classes>
+      <class name="com.javacodekava.testng.maven.TC1_tstNg"></class>
+    </classes>
+  </test>
+   
+   <!-- ExampleTest --> 
+  <test name="TestA">
+    <classes>
+      <class name="com.javacodekava.testng.maven.TestNgMavenExampleTest"></class>
+    </classes>
+  </test> 
 </suite> <!-- Suite -->
