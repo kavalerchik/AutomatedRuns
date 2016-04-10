@@ -3,7 +3,6 @@
 	<name>mavenexample</name>
 	<comment></comment>
 	<projects>
-		<project>testing_120</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

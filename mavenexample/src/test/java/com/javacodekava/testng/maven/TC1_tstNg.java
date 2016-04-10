@@ -24,12 +24,6 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import automationFramework.BasicAdTests;
-import automationFramework.BasicTests;
-import automationFramework.Consts;
-import automationFramework.GeneralUtils;
-import automationFramework.TestResult;
-import automationFramework.main;
 
 public class TC1_tstNg {
 
@@ -85,10 +79,10 @@ public class TC1_tstNg {
 			
 			for (Integer i = 0; i < URLlist.length; i++) {
 				
-				main.urlRunId ++;
-				summary.append(main.urlRunId);
+				GeneralUtils.urlRunId ++;
+				summary.append(GeneralUtils.urlRunId);
 				
-				log.appendln("\nURL run ID: " + main.urlRunId + "\nTest run:: XXX_CHANGE_ME_XXX");
+				log.appendln("\nURL run ID: " + GeneralUtils.urlRunId + "\nTest run:: XXX_CHANGE_ME_XXX");
 				log.appendln("*******  " + URLlist[i]);
 				boolean testRunSuccessfull = true;
 				
@@ -121,7 +115,7 @@ public class TC1_tstNg {
 				long timePageLoad = timeS - secBeforeLoadingURL;
 				log.appendln("URL no."+(i+1)+" loading duration was: "+timePageLoad/1000.0);
 				System.out.println("URL no."+(i+1)+" loading duration was: "+timePageLoad/1000.0);
-				main.totalPagesLoadTime += timePageLoad; 
+				GeneralUtils.totalPagesLoadTime += timePageLoad; 
 				
 				List<String> errors = new ArrayList<String>();
 				
@@ -401,7 +395,7 @@ public class TC1_tstNg {
 			TestResult resultsAll = new TestResult(log, pageErrors, summary);
 			testResults.addElement(resultsAll);
 			
-			main.WriteToFile(testResults, "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_TC_"+testId+"_");
+			GeneralUtils.WriteToFile(testResults, "C:\\Users\\Yair\\Documents\\yair\\QA\\TestAutomation\\Selenium\\output\\output_TC_"+testId+"_");
 	  
 	  
   }
